@@ -1,0 +1,26 @@
+# experiment parameters
+log_dir: ./results/
+model_dir: ./models/
+seed: 0
+train_steps: 500000
+eval_period: 5000
+n_eval_episodes: 10
+max_episode_steps: 1000
+load_step: 0 # step of model to load (if needed)
+T: 0 # expert trajectory index
+
+# network parameters
+hidden_dim: 256
+n_hidden: 2
+batch_size: 256
+value_lr: 2.0e-4
+policy_lr: 2.0e-4
+weight_decay: 1.0e-5
+layer_norm: False
+use_tanh: True # use tanh for policy output
+
+# RL parameters
+f_name: Pearson_chi_square
+discount: 0.99
+normalize: True # use data normalization
+use_twin_v: True
