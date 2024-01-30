@@ -113,7 +113,7 @@ def main(args):
         args.n_eval_episodes = 50
     
     wandb.init(project=f"odice_offline_IL",
-               entity="ryanxhr",
+               entity="your name",
                name=f"{args.env_name}_ODICE",
                config={
                    "env_name": args.env_name,

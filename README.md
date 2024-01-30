@@ -13,7 +13,7 @@ Note that although we set "--type" as "orthogonal_true_g" for ODICE, you can che
 
 ### Bibtex
 ```
-@inproceedings{mao2024ODICE,
+@inproceedings{mao2024odice,
   title  = {ODICE: Revealing the Mystery of Distribution Correction Estimation via Orthogonal-gradient Update},
   author = {Liyuan Mao, Haoran Xu, Weinan Zhang, Xianyuan Zhan},
   year   = {2024},
