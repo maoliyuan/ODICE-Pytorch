@@ -1,6 +1,6 @@
 # ODICE: Revealing the Mystery of Distribution Correction Estimation via Orthogonal-gradient Update
 
-This is the official implementation for the paper **ODICE: Revealing the Mystery of Distribution Correction Estimation via Orthogonal-gradient Update** accepted as **Notable-top-5%** at ICLR'2024.
+This is the official implementation for the paper **ODICE: Revealing the Mystery of Distribution Correction Estimation via Orthogonal-gradient Update** accepted as **Spotlight** at ICLR'2024.
 
 ### Usage
 To reproduce the experiments in Offline RL part, please run:

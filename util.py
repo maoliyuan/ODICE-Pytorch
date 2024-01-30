@@ -126,6 +126,7 @@ def _sample_indces(dataset, batch_size):
 def sample_batch(dataset, batch_size):
     n, device = len(dataset['observations']), dataset['observations'].device
     batch = {}
+    # indices_0 = torch.randint(low=0, high=n, size=(batch_size,), device=device)
     indices = torch.randint(low=0, high=n, size=(batch_size,), device=device)
     for k, v in dataset.items():
         if k == "trajectory_terminals":

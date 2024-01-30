@@ -17,83 +17,6 @@ import wandb
 import time
 
 
-def qlearning_dataset(env, dataset=None, terminate_on_end=False, **kwargs):
-    """
-    Returns datasets formatted for use by standard Q-learning algorithms,
-    with observations, actions, next_observations, rewards, and a terminal
-    flag.
-
-    Args:
-        env: An OfflineEnv object.
-        dataset: An optional dataset to pass in for processing. If None,
-            the dataset will default to env.get_dataset()
-        terminate_on_end (bool): Set done=True on the last timestep
-            in a trajectory. Default is False, and will discard the
-            last timestep in each trajectory.
-        **kwargs: Arguments to pass to env.get_dataset().
-
-    Returns:
-        A dictionary containing keys:
-            observations: An N x dim_obs array of observations.
-            actions: An N x dim_action array of actions.
-            next_observations: An N x dim_obs array of next observations.
-            rewards: An N-dim float array of rewards.
-            terminals: An N-dim boolean array of "done" or episode termination flags.
-    """
-    if dataset is None:
-        dataset = env.get_dataset(**kwargs)
-
-    N = dataset['rewards'].shape[0]
-    obs_ = []
-    next_obs_ = []
-    action_ = []
-    reward_ = []
-    done_ = []
-    trajectory_done_ = []
-
-    # The newer version of the dataset adds an explicit
-    # timeouts field. Keep old method for backwards compatability.
-    use_timeouts = False
-    if 'timeouts' in dataset:
-        use_timeouts = True
-
-    episode_step = 0
-    for i in range(N-1):
-        obs = dataset['observations'][i].astype(np.float32)
-        new_obs = dataset['observations'][i+1].astype(np.float32)
-        action = dataset['actions'][i].astype(np.float32)
-        reward = dataset['rewards'][i].astype(np.float32)
-        done_bool = bool(dataset['terminals'][i])
-
-        if use_timeouts:
-            final_timestep = dataset['timeouts'][i]
-        else:
-            final_timestep = (episode_step == env._max_episode_steps - 1)
-        if (not terminate_on_end) and final_timestep:
-            # Skip this transition and don't apply terminals on the last step of an episode
-            episode_step = 0
-            trajectory_done_[-1] = True
-            continue
-        if done_bool or final_timestep:
-            episode_step = 0
-
-        obs_.append(obs)
-        next_obs_.append(new_obs)
-        action_.append(action)
-        reward_.append(reward)
-        done_.append(done_bool)
-        trajectory_done_.append(final_timestep)
-        episode_step += 1
-
-    return {
-        'observations': np.array(obs_),
-        'actions': np.array(action_),
-        'next_observations': np.array(next_obs_),
-        'rewards': np.array(reward_),
-        'terminals': np.array(done_),
-        'trajectory_terminals': np.array(trajectory_done_),
-    }
-
 def dataset_T_trajs(dataset, T, terminate_on_end=False):
     """
     Returns Tth trajs from dataset.
@@ -183,14 +106,14 @@ def get_env_and_dataset(env_name, max_episode_steps, normalize, T):
 
 
 def main(args):
-    args.log_dir = '/'.join(__file__.split('/')[: -1]) + '/' + args.log_dir
-    args.model_dir = '/'.join(__file__.split('/')[: -1]) + '/' + args.model_dir
+    # args.log_dir = '/'.join(__file__.split('/')[: -1]) + '/' + args.log_dir
+    # args.model_dir = '/'.join(__file__.split('/')[: -1]) + '/' + args.model_dir
     if 'antmaze' in args.env_name:
         args.eval_period = 20000 if args.eval_period < 20000 else args.eval_period
         args.n_eval_episodes = 50
     
     wandb.init(project=f"odice_offline_IL",
-               entity="your name",
+               entity="ryanxhr",
                name=f"{args.env_name}_ODICE",
                config={
                    "env_name": args.env_name,
@@ -274,8 +197,11 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument('--env_name', type=str, default="hopper-expert-v2")
+    parser.add_argument('--seed', type=int, default=1)
     parser.add_argument('--Lambda', type=float, default=0.4)
     parser.add_argument('--eta', type=float, default=1.0)
+    parser.add_argument('--T', type=int, default=1)
+    parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument("--type", type=str, choices=['orthogonal_true_g', 'true_g', 'semi_g'], default='orthogonal_true_g')
     with open("configs/offline_IL.yaml", "r") as file:
         config = yaml.safe_load(file)

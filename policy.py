@@ -66,6 +66,28 @@ class SquashedGaussianPolicy(nn.Module):
         log_prob = log_prob.sum(-1)
         return log_prob
 
+
+# class GaussianPolicy(nn.Module):
+#     def __init__(self, obs_dim, act_dim, hidden_dim=256, n_hidden=2, use_tanh="False"):
+#         super().__init__()
+#         self.use_tanh = use_tanh
+#         self.net = mlp([obs_dim, *([hidden_dim] * n_hidden), act_dim])
+#         self.log_std = nn.Parameter(torch.zeros(act_dim, dtype=torch.float32))
+#
+#     def forward(self, obs):
+#         mean = self.net(obs)
+#         std = torch.exp(self.log_std.clamp(LOG_STD_MIN, LOG_STD_MAX))
+#         scale_tril = torch.diag(std)
+#         return MultivariateNormal(mean, scale_tril=scale_tril)
+#
+#     def act(self, obs, deterministic=False, enable_grad=False):
+#         with torch.set_grad_enabled(enable_grad):
+#             dist = self(obs)
+#             action = dist.mean if deterministic else dist.rsample()
+#             action = torch.tanh(action) if self.use_tanh else torch.clip(action, min=-1.0, max=1.0)
+#             return action
+
+
 class GaussianPolicy(nn.Module):
     def __init__(self, obs_dim, act_dim, hidden_dim=256, n_hidden=2, use_tanh="False"):
         super().__init__()
@@ -75,6 +97,8 @@ class GaussianPolicy(nn.Module):
 
     def forward(self, obs):
         mean = self.net(obs)
+        if self.use_tanh:
+            mean = torch.tanh(mean)
         std = torch.exp(self.log_std.clamp(LOG_STD_MIN, LOG_STD_MAX))
         scale_tril = torch.diag(std)
         return MultivariateNormal(mean, scale_tril=scale_tril)
@@ -83,7 +107,7 @@ class GaussianPolicy(nn.Module):
         with torch.set_grad_enabled(enable_grad):
             dist = self(obs)
             action = dist.mean if deterministic else dist.rsample()
-            action = torch.tanh(action) if self.use_tanh else torch.clip(action, min=-1.0, max=1.0)
+            action = torch.clip(action, min=-1.0, max=1.0)
             return action
 
 
