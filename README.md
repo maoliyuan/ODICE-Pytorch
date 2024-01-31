@@ -4,10 +4,14 @@ This is the official implementation for the paper **ODICE: Revealing the Mystery
 
 ### Usage
 To reproduce the experiments in Offline RL part, please run:
-> python main_odice_rl.py --env_name your_env_name --Lambda your_lambda --eta your_eta --type orthogonal_true_g
+``` Bash
+ python main_odice_rl.py --env_name your_env_name --Lambda your_lambda --eta your_eta --type orthogonal_true_g
+```
 
 To reproduce the experiments in Offline IL part, please run:
-> python main_odice_il.py --env_name your_env_name --Lambda your_lambda --eta your_eta --type orthogonal_true_g
+``` Bash
+python main_odice_il.py --env_name your_env_name --Lambda your_lambda --eta your_eta --type orthogonal_true_g
+```
 
 Note that although we set "--type" as "orthogonal_true_g" for ODICE, you can check the results of other gradient types("true_g" and "semi_g") if you like. The choice of other hyper-parameters are listed in appendix D.
 
